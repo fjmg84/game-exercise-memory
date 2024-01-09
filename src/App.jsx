@@ -2,12 +2,18 @@ import { useState } from "react";
 import Button from "./components/ui/button";
 import { useEffect } from "react";
 import { generateNumbers } from "./utils/functions";
+import confetti from "canvas-confetti";
 
 function App() {
   const [numbers, setNumbers] = useState([]);
   const [activeNumbers, setActiveNumbers] = useState([]);
   const [isClicked, setIsClicked] = useState([]);
-  const [win, setWin] = useState(false);
+
+  console.log({ activeNumbers });
+
+  useEffect(() => {
+    createNewGame();
+  }, []);
 
   useEffect(() => {
     if (
@@ -30,21 +36,23 @@ function App() {
   }, [isClicked]);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (activeNumbers.length === 16) {
+        confetti();
+      }
+    }, 2500);
+
+    return () => clearTimeout(timeout); // this is a cleanup function that will be called when the component unmounts or the component is updated. It will clear the timeout if the component is unmounted or updated. This is important because if the component is updated, the timeout will be cleared and a new timeout will be
+  }, [activeNumbers]);
+
+  const createNewGame = () => {
     const values = generateNumbers();
     setNumbers(values);
     setActiveNumbers(values);
-  }, []);
-
-  useEffect(() => {
     setTimeout(() => {
       setActiveNumbers([]);
     }, 2000);
-  }, [win]);
-
-  const handleReset = () => {
-    const values = generateNumbers();
-    setNumbers(values);
-    setActiveNumbers(values);
+    return;
   };
 
   return (
@@ -57,7 +65,7 @@ function App() {
             customClass="bg-orange-500 rounded-full text-white font-extrabold hover:bg-orange-400 capitalize"
           />
           <Button
-            onAction={handleReset}
+            onAction={createNewGame}
             text={"new game"}
             customClass="bg-gray-300 rounded-full text-gray-700 font-extrabold hover:bg-gray-700 hover:text-white capitalize"
           />
@@ -70,11 +78,12 @@ function App() {
             return (
               <div key={index} className="relative overflow-hidden">
                 <button
+                  disabled={isClicked.length === 2}
                   onClick={() => setIsClicked((prev) => [...prev, item])}
                   className={`
                  ${isClicked.includes(item) && "top-36"}
                  ${activeNumbers.includes(item) && "hidden"}
-                absolute bg-slate-300 text-white rounded-full w-28 h-28 font-extrabold text-4xl
+                absolute bg-slate-300 text-white rounded-full w-28 h-28 font-extrabold text-4xl 
                 `}
                 ></button>
 
