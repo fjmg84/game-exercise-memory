@@ -6,53 +6,69 @@ import confetti from "canvas-confetti";
 
 function App() {
   const [numbers, setNumbers] = useState([]);
-  const [activeNumbers, setActiveNumbers] = useState([]);
-  const [isClicked, setIsClicked] = useState([]);
-
-  console.log({ activeNumbers });
 
   useEffect(() => {
     createNewGame();
   }, []);
 
   useEffect(() => {
-    if (
-      isClicked.length === 2 &&
-      Math.abs(isClicked[0]) !== Math.abs(isClicked[1])
-    ) {
-      setTimeout(() => {
-        setIsClicked([]);
-        return;
-      }, 1000);
+    if (numbers.every((item) => item.show)) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
     }
 
-    if (
-      isClicked.length === 2 &&
-      Math.abs(isClicked[0]) === Math.abs(isClicked[1])
-    ) {
-      setIsClicked([]);
-      setActiveNumbers((prev) => [...prev, ...isClicked]);
-    }
-  }, [isClicked]);
+    const values = numbers.filter((item) => item.active);
+    if (values.length === 2) {
+      let arrayNumbers = [...numbers];
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (activeNumbers.length === 16) {
-        confetti();
+      if (Math.abs(values[0].value) !== Math.abs(values[1].value)) {
+        values.forEach((item) => {
+          let index = arrayNumbers.findIndex(
+            (number) => number.value === item.value
+          );
+          arrayNumbers[index].active = false;
+        });
       }
-    }, 2500);
 
-    return () => clearTimeout(timeout); // this is a cleanup function that will be called when the component unmounts or the component is updated. It will clear the timeout if the component is unmounted or updated. This is important because if the component is updated, the timeout will be cleared and a new timeout will be
-  }, [activeNumbers]);
+      if (Math.abs(values[0].value) === Math.abs(values[1].value)) {
+        values.forEach((item) => {
+          let index = arrayNumbers.findIndex(
+            (number) => number.value === item.value
+          );
+          arrayNumbers[index].active = false;
+          arrayNumbers[index].show = true;
+        });
+      }
+      setTimeout(() => {
+        setNumbers(arrayNumbers);
+      }, 2000);
+      return;
+    }
+  }, [numbers]);
 
   const createNewGame = () => {
     const values = generateNumbers();
-    setNumbers(values);
-    setActiveNumbers(values);
-    setTimeout(() => {
-      setActiveNumbers([]);
-    }, 2000);
+    const arrValues = values.map((item) => {
+      return {
+        active: false,
+        show: false,
+        value: item,
+      };
+    });
+
+    setNumbers(arrValues);
     return;
+  };
+
+  const handleClick = (value) => () => {
+    const arrayNumbers = [...numbers];
+
+    const index = arrayNumbers.findIndex((item) => item.value === value);
+    arrayNumbers[index].active = true;
+    setNumbers(arrayNumbers);
   };
 
   return (
@@ -74,21 +90,20 @@ function App() {
 
       <main className="flex items-center justify-center">
         <section className="grid grid-rows-4 grid-cols-4 gap-10">
-          {numbers.map((item, index) => {
+          {numbers.map(({ active, show, value }, index) => {
             return (
               <div key={index} className="relative overflow-hidden">
                 <button
-                  disabled={isClicked.length === 2}
-                  onClick={() => setIsClicked((prev) => [...prev, item])}
+                  onClick={handleClick(value)}
                   className={`
-                 ${isClicked.includes(item) && "top-36"}
-                 ${activeNumbers.includes(item) && "hidden"}
+                ${active && "top-36"} 
+                ${show && "hidden"}
                 absolute bg-slate-300 text-white rounded-full w-28 h-28 font-extrabold text-4xl 
                 `}
                 ></button>
 
                 <div className="flex items-center justify-center bg-slate-700 text-white rounded-full w-28 h-28 font-extrabold text-4xl">
-                  {Math.abs(item)}
+                  {Math.abs(value)}
                 </div>
               </div>
             );
