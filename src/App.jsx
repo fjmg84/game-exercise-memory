@@ -4,9 +4,17 @@ import { useEffect } from "react";
 import { generateNumbers } from "./utils/functions";
 import confetti from "canvas-confetti";
 import ListButton from "./components/list-buttons";
+import Statistics from "./components/statistics";
 
 function App() {
   const [numbers, setNumbers] = useState([]);
+  const [statistics, setStatistics] = useState({
+    errors: 0,
+    success: 0,
+    start: false,
+  });
+
+  console.log(numbers);
 
   // should load game
   useEffect(() => {
@@ -16,6 +24,7 @@ function App() {
   useEffect(() => {
     // if all numbers is show true so you win
     if (numbers.length > 0 && numbers.every((item) => item.show)) {
+      setStatistics((prev) => ({ ...prev, start: "stop" }));
       confetti({
         particleCount: 100,
         spread: 70,
@@ -31,6 +40,7 @@ function App() {
 
       setTimeout(() => {
         setNumbers(arrValues);
+        setStatistics((prev) => ({ ...prev, start: true }));
       }, 5000);
     }
 
@@ -43,6 +53,7 @@ function App() {
 
       // if the two numbers are not the some
       if (absValue1 !== absValue2) {
+        setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
         values.forEach((item) => {
           let index = arrayNumbers.findIndex(
             (number) => number.value === item.value
@@ -57,6 +68,7 @@ function App() {
 
       // if the two numbers are the some
       if (absValue1 === absValue2) {
+        setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
         values.forEach((item) => {
           let index = arrayNumbers.findIndex(
             (number) => number.value === item.value
@@ -119,7 +131,7 @@ function App() {
         </div>
       </nav>
 
-      <main className="flex items-center justify-center">
+      <main className="flex items-center justify-evenly flex-wrap gap-2">
         <section className="grid grid-rows-4 grid-cols-4 gap-10">
           {numbers.map((item, index) => {
             const { value } = item;
@@ -132,6 +144,14 @@ function App() {
               />
             );
           })}
+        </section>
+
+        <section>
+          <Statistics
+            errors={statistics.errors}
+            success={statistics.success}
+            start={statistics.start}
+          />
         </section>
       </main>
     </div>
