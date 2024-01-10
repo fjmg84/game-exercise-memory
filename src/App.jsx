@@ -3,56 +3,114 @@ import Button from "./components/ui/button";
 import { useEffect } from "react";
 import { generateNumbers } from "./utils/functions";
 import confetti from "canvas-confetti";
+import ListButton from "./components/list-buttons";
+import Statistics from "./components/statistics";
 
 function App() {
   const [numbers, setNumbers] = useState([]);
-  const [activeNumbers, setActiveNumbers] = useState([]);
-  const [isClicked, setIsClicked] = useState([]);
+  const [statistics, setStatistics] = useState({
+    errors: 0,
+    success: 0,
+    start: false,
+  });
 
-  console.log({ activeNumbers });
+  console.log(numbers);
 
+  // should load game
   useEffect(() => {
     createNewGame();
   }, []);
 
   useEffect(() => {
-    if (
-      isClicked.length === 2 &&
-      Math.abs(isClicked[0]) !== Math.abs(isClicked[1])
-    ) {
+    // if all numbers is show true so you win
+    if (numbers.length > 0 && numbers.every((item) => item.show)) {
+      setStatistics((prev) => ({ ...prev, start: "stop" }));
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    }
+
+    // show all numbers when you create new game
+    if (numbers.length > 0 && numbers.every((item) => item.active)) {
+      const arrValues = numbers.map((item) => {
+        return { ...item, active: false };
+      });
+
       setTimeout(() => {
-        setIsClicked([]);
-        return;
-      }, 1000);
+        setNumbers(arrValues);
+        setStatistics((prev) => ({ ...prev, start: true }));
+      }, 5000);
     }
 
-    if (
-      isClicked.length === 2 &&
-      Math.abs(isClicked[0]) === Math.abs(isClicked[1])
-    ) {
-      setIsClicked([]);
-      setActiveNumbers((prev) => [...prev, ...isClicked]);
-    }
-  }, [isClicked]);
+    const values = numbers.filter((item) => item.active);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (activeNumbers.length === 16) {
-        confetti();
+    if (values.length === 2) {
+      let arrayNumbers = structuredClone(numbers);
+      let absValue1 = Math.abs(values[0].value),
+        absValue2 = Math.abs(values[1].value);
+
+      // if the two numbers are not the some
+      if (absValue1 !== absValue2) {
+        setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
+        values.forEach((item) => {
+          let index = arrayNumbers.findIndex(
+            (number) => number.value === item.value
+          );
+          arrayNumbers[index].active = false;
+        });
+
+        setTimeout(() => {
+          setNumbers(arrayNumbers);
+        }, 1200);
       }
-    }, 2500);
 
-    return () => clearTimeout(timeout); // this is a cleanup function that will be called when the component unmounts or the component is updated. It will clear the timeout if the component is unmounted or updated. This is important because if the component is updated, the timeout will be cleared and a new timeout will be
-  }, [activeNumbers]);
+      // if the two numbers are the some
+      if (absValue1 === absValue2) {
+        setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
+        values.forEach((item) => {
+          let index = arrayNumbers.findIndex(
+            (number) => number.value === item.value
+          );
+          arrayNumbers[index].active = false;
+          arrayNumbers[index].show = true;
+        });
+
+        setNumbers(arrayNumbers);
+      }
+    }
+  }, [numbers]);
+
+  const resetGame = () => {
+    const arrValues = numbers.map((item) => {
+      return {
+        active: false,
+        show: false,
+        value: item.value,
+      };
+    });
+
+    setNumbers(arrValues);
+  };
 
   const createNewGame = () => {
     const values = generateNumbers();
-    setNumbers(values);
-    setActiveNumbers(values);
-    setTimeout(() => {
-      setActiveNumbers([]);
-    }, 2000);
-    return;
+    const arrValues = values.map((item) => {
+      return {
+        active: true,
+        show: false,
+        value: item,
+      };
+    });
+    setNumbers(arrValues);
+  };
+
+  const handleClick = (value) => () => {
+    const arrayNumbers = [...numbers];
+    const index = arrayNumbers.findIndex((item) => item.value === value);
+    arrayNumbers[index].active = true;
+    setNumbers(arrayNumbers);
   };
 
   return (
@@ -63,6 +121,7 @@ function App() {
           <Button
             text={"reset"}
             customClass="bg-orange-500 rounded-full text-white font-extrabold hover:bg-orange-400 capitalize"
+            onAction={resetGame}
           />
           <Button
             onAction={createNewGame}
@@ -72,27 +131,27 @@ function App() {
         </div>
       </nav>
 
-      <main className="flex items-center justify-center">
+      <main className="flex items-center justify-evenly flex-wrap gap-2">
         <section className="grid grid-rows-4 grid-cols-4 gap-10">
           {numbers.map((item, index) => {
+            const { value } = item;
             return (
-              <div key={index} className="relative overflow-hidden">
-                <button
-                  disabled={isClicked.length === 2}
-                  onClick={() => setIsClicked((prev) => [...prev, item])}
-                  className={`
-                 ${isClicked.includes(item) && "top-36"}
-                 ${activeNumbers.includes(item) && "hidden"}
-                absolute bg-slate-300 text-white rounded-full w-28 h-28 font-extrabold text-4xl 
-                `}
-                ></button>
-
-                <div className="flex items-center justify-center bg-slate-700 text-white rounded-full w-28 h-28 font-extrabold text-4xl">
-                  {Math.abs(item)}
-                </div>
-              </div>
+              <ListButton
+                key={index}
+                disabled={numbers.filter((item) => item.active).length === 2}
+                handleClick={handleClick(value)}
+                item={item}
+              />
             );
           })}
+        </section>
+
+        <section>
+          <Statistics
+            errors={statistics.errors}
+            success={statistics.success}
+            start={statistics.start}
+          />
         </section>
       </main>
     </div>

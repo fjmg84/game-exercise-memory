@@ -16,7 +16,7 @@ export const generateNumbers = () => {
         max: 20,
       });
 
-      if (!tempA.includes(number)) {
+      if (number !==0 && !tempA.includes(number)) {
         tempA.push(number);
         tempB.push(number * -1);
       }
