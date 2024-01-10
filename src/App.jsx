@@ -3,16 +3,20 @@ import Button from "./components/ui/button";
 import { useEffect } from "react";
 import { generateNumbers } from "./utils/functions";
 import confetti from "canvas-confetti";
+import ListButton from "./components/list-buttons";
 
 function App() {
   const [numbers, setNumbers] = useState([]);
 
+  // should load game
   useEffect(() => {
     createNewGame();
   }, []);
 
   useEffect(() => {
-    if (numbers.every((item) => item.show)) {
+    // if all numbers is show true so you win
+    if (numbers.length > 0 && numbers.every((item) => item.show)) {
+      console.log(numbers.every((item) => item.show));
       confetti({
         particleCount: 100,
         spread: 70,
@@ -20,10 +24,23 @@ function App() {
       });
     }
 
+    // show all numbers when you create new game
+    if (numbers.length > 0 && numbers.every((item) => item.active)) {
+      const arrValues = numbers.map((item) => {
+        return { ...item, active: false };
+      });
+
+      setTimeout(() => {
+        setNumbers(arrValues);
+      }, 2000);
+    }
+
     const values = numbers.filter((item) => item.active);
+
     if (values.length === 2) {
       let arrayNumbers = [...numbers];
 
+      // if the two numbers are not the some
       if (Math.abs(values[0].value) !== Math.abs(values[1].value)) {
         values.forEach((item) => {
           let index = arrayNumbers.findIndex(
@@ -31,8 +48,13 @@ function App() {
           );
           arrayNumbers[index].active = false;
         });
+
+        setTimeout(() => {
+          setNumbers(arrayNumbers);
+        }, 1200);
       }
 
+      // if the two numbers are the some
       if (Math.abs(values[0].value) === Math.abs(values[1].value)) {
         values.forEach((item) => {
           let index = arrayNumbers.findIndex(
@@ -41,31 +63,38 @@ function App() {
           arrayNumbers[index].active = false;
           arrayNumbers[index].show = true;
         });
-      }
-      setTimeout(() => {
+
         setNumbers(arrayNumbers);
-      }, 2000);
-      return;
+      }
     }
   }, [numbers]);
+
+  const resetGame = () => {
+    const arrValues = numbers.map((item) => {
+      return {
+        active: false,
+        show: false,
+        value: item.value,
+      };
+    });
+
+    setNumbers(arrValues);
+  };
 
   const createNewGame = () => {
     const values = generateNumbers();
     const arrValues = values.map((item) => {
       return {
-        active: false,
+        active: true,
         show: false,
         value: item,
       };
     });
-
     setNumbers(arrValues);
-    return;
   };
 
   const handleClick = (value) => () => {
     const arrayNumbers = [...numbers];
-
     const index = arrayNumbers.findIndex((item) => item.value === value);
     arrayNumbers[index].active = true;
     setNumbers(arrayNumbers);
@@ -79,6 +108,7 @@ function App() {
           <Button
             text={"reset"}
             customClass="bg-orange-500 rounded-full text-white font-extrabold hover:bg-orange-400 capitalize"
+            onAction={resetGame}
           />
           <Button
             onAction={createNewGame}
@@ -90,22 +120,15 @@ function App() {
 
       <main className="flex items-center justify-center">
         <section className="grid grid-rows-4 grid-cols-4 gap-10">
-          {numbers.map(({ active, show, value }, index) => {
+          {numbers.map((item, index) => {
+            const { value } = item;
             return (
-              <div key={index} className="relative overflow-hidden">
-                <button
-                  onClick={handleClick(value)}
-                  className={`
-                ${active && "top-36"} 
-                ${show && "hidden"}
-                absolute bg-slate-300 text-white rounded-full w-28 h-28 font-extrabold text-4xl 
-                `}
-                ></button>
-
-                <div className="flex items-center justify-center bg-slate-700 text-white rounded-full w-28 h-28 font-extrabold text-4xl">
-                  {Math.abs(value)}
-                </div>
-              </div>
+              <ListButton
+                key={index}
+                disabled={numbers.filter((item) => item.active).length === 2}
+                handleClick={handleClick(value)}
+                item={item}
+              />
             );
           })}
         </section>
