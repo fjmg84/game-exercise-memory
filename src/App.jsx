@@ -16,7 +16,6 @@ function App() {
   useEffect(() => {
     // if all numbers is show true so you win
     if (numbers.length > 0 && numbers.every((item) => item.show)) {
-      console.log(numbers.every((item) => item.show));
       confetti({
         particleCount: 100,
         spread: 70,
@@ -32,16 +31,18 @@ function App() {
 
       setTimeout(() => {
         setNumbers(arrValues);
-      }, 2000);
+      }, 5000);
     }
 
     const values = numbers.filter((item) => item.active);
 
     if (values.length === 2) {
-      let arrayNumbers = [...numbers];
+      let arrayNumbers = structuredClone(numbers);
+      let absValue1 = Math.abs(values[0].value),
+        absValue2 = Math.abs(values[1].value);
 
       // if the two numbers are not the some
-      if (Math.abs(values[0].value) !== Math.abs(values[1].value)) {
+      if (absValue1 !== absValue2) {
         values.forEach((item) => {
           let index = arrayNumbers.findIndex(
             (number) => number.value === item.value
@@ -55,7 +56,7 @@ function App() {
       }
 
       // if the two numbers are the some
-      if (Math.abs(values[0].value) === Math.abs(values[1].value)) {
+      if (absValue1 === absValue2) {
         values.forEach((item) => {
           let index = arrayNumbers.findIndex(
             (number) => number.value === item.value
