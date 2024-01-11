@@ -154,7 +154,7 @@ function App() {
         </section>
 
         <section>
-          <article className="bg-slate-700 text-white rounded-xl p-5 flex items-center justify-center gap-5">
+          <article className="bg-slate-700 text-white p-5 flex lg:flex-col rounded-full lg:rounded-md items-center justify-center gap-5 lg:gap-2">
             <Statistics
               errors={statistics.errors}
               success={statistics.success}

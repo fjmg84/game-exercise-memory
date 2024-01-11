@@ -777,3 +777,35 @@ body {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
+
+@media (min-width: 768px) {
+  .md\:flex-col {
+    flex-direction: column;
+  }
+
+  .md\:rounded-full {
+    border-radius: 9999px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:flex-col {
+    flex-direction: column;
+  }
+
+  .lg\:gap-2 {
+    gap: 0.5rem;
+  }
+
+  .lg\:rounded-full {
+    border-radius: 9999px;
+  }
+
+  .lg\:rounded-sm {
+    border-radius: 0.125rem;
+  }
+
+  .lg\:rounded-md {
+    border-radius: 0.375rem;
+  }
+}
