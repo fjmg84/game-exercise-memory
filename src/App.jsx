@@ -49,7 +49,49 @@ function App() {
       }, 5000);
     }
 
-    const values = numbers.filter((item) => item.active);
+    let indices = [];
+    numbers.forEach((item, index) => {
+      if (item.active) indices.push(index);
+    });
+
+    if (indices.length === 2) {
+      let value1 = Math.abs(numbers[indices[0]].value),
+        value2 = Math.abs(numbers[indices[1]].value),
+        arrNumbers = [...numbers];
+
+      if (value1 === value2) {
+        arrNumbers = arrNumbers.with(indices[0], {
+          ...arrNumbers[indices[0]],
+          active: false,
+          show: true,
+        });
+        arrNumbers = arrNumbers.with(indices[1], {
+          ...arrNumbers[indices[1]],
+          active: false,
+          show: true,
+        });
+
+        setNumbers(arrNumbers);
+        setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
+      }
+
+      if (value1 !== value2) {
+        arrNumbers = arrNumbers.with(indices[0], {
+          ...arrNumbers[indices[0]],
+          active: false,
+        });
+        arrNumbers = arrNumbers.with(indices[1], {
+          ...arrNumbers[indices[1]],
+          active: false,
+        });
+        setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
+        setTimeout(() => {
+          setNumbers(arrNumbers);
+        }, 1200);
+      }
+    }
+
+    /* const values = numbers.filter((item) => item.active);
     let arrayNumbers = [...numbers];
     let absValue1 = Math.abs(values[0].value),
       absValue2 = Math.abs(values[1].value);
@@ -83,7 +125,7 @@ function App() {
 
         setNumbers(arrayNumbers);
       }
-    }
+    } */
   }, [numbers]);
 
   const resetGame = () => {
