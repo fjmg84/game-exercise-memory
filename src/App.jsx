@@ -1,12 +1,12 @@
-import { useState } from "react";
-import Button from "./components/ui/button";
-import { useEffect } from "react";
-import { generateNumbers } from "./utils/functions";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
+import Button from "./components/ui/button";
 import ListButton from "./components/list-buttons";
 import Statistics from "./components/statistics";
 import Timer from "./components/timer";
+import { generateNumbers } from "./utils/functions";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const STATUS_TIMER = {
   STOP: "stop",
   START: "start",
@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // if all numbers is show true so you win
+    // if the show prop is true then you win
     if (numbers.length > 0 && numbers.every((item) => item.show)) {
       setTimer(STATUS_TIMER.PAUSE);
       confetti({
@@ -50,13 +50,12 @@ function App() {
     }
 
     const values = numbers.filter((item) => item.active);
+    let arrayNumbers = [...numbers];
+    let absValue1 = Math.abs(values[0].value),
+      absValue2 = Math.abs(values[1].value);
 
     if (values.length === 2) {
-      let arrayNumbers = structuredClone(numbers);
-      let absValue1 = Math.abs(values[0].value),
-        absValue2 = Math.abs(values[1].value);
-
-      // if the two numbers are not the some
+      // if the two numbers are not the same
       if (absValue1 !== absValue2) {
         setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
         values.forEach((item) => {
@@ -71,7 +70,7 @@ function App() {
         }, 1200);
       }
 
-      // if the two numbers are the some
+      // if the two numbers are the same
       if (absValue1 === absValue2) {
         setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
         values.forEach((item) => {
