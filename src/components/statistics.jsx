@@ -1,23 +1,12 @@
-import { useEffect } from "react";
-import { useState } from "react";
-
-export default function Statistics({ errors, success, start = false }) {
-  const [seconds, setSeconds] = useState(0);
-
-  console.log({ errors, success, start });
-
-  useEffect(() => {
-    let time = setTimeout(() => {
-      if (start) setSeconds(seconds + 1);
-    }, 1000);
-
-    return () => clearTimeout(time);
-  });
+export default function Statistics({ errors, success }) {
   return (
-    <article className="bg-slate-700 text-white rounded-xl p-5 flex items-center justify-center gap-5">
-      <p>Errors: {errors}</p>
-      <p>Success: {success}</p>
-      <p>time: {seconds}</p>
-    </article>
+    <>
+      <p className="font-extrabold">
+        Errors: <span className="text-red-400">{errors}</span>
+      </p>
+      <p className="font-extrabold ">
+        Success: <span className="text-green-400">{success}</span>
+      </p>
+    </>
   );
 }

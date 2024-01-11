@@ -5,14 +5,15 @@ import { generateNumbers } from "./utils/functions";
 import confetti from "canvas-confetti";
 import ListButton from "./components/list-buttons";
 import Statistics from "./components/statistics";
+import Timer from "./components/timer";
 
 function App() {
   const [numbers, setNumbers] = useState([]);
   const [statistics, setStatistics] = useState({
     errors: 0,
     success: 0,
-    start: false,
   });
+  const [timer, setTimer] = useState("stop");
 
   console.log(numbers);
 
@@ -24,7 +25,7 @@ function App() {
   useEffect(() => {
     // if all numbers is show true so you win
     if (numbers.length > 0 && numbers.every((item) => item.show)) {
-      setStatistics((prev) => ({ ...prev, start: "stop" }));
+      setTimer("pause");
       confetti({
         particleCount: 100,
         spread: 70,
@@ -40,7 +41,7 @@ function App() {
 
       setTimeout(() => {
         setNumbers(arrValues);
-        setStatistics((prev) => ({ ...prev, start: true }));
+        setTimer("start");
       }, 5000);
     }
 
@@ -104,6 +105,8 @@ function App() {
       };
     });
     setNumbers(arrValues);
+    setStatistics({ errors: 0, success: 0 });
+    setTimer("stop");
   };
 
   const handleClick = (value) => () => {
@@ -147,11 +150,13 @@ function App() {
         </section>
 
         <section>
-          <Statistics
-            errors={statistics.errors}
-            success={statistics.success}
-            start={statistics.start}
-          />
+          <article className="bg-slate-700 text-white rounded-xl p-5 flex items-center justify-center gap-5">
+            <Statistics
+              errors={statistics.errors}
+              success={statistics.success}
+            />
+            <Timer timer={timer} />
+          </article>
         </section>
       </main>
     </div>
