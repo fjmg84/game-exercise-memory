@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
+import { STATUS_TIMER } from "../App";
 
-export default function Timer({ timer = "stop" }) {
+export default function Timer({ timer = STATUS_TIMER.STOP }) {
   const [seconds, setSeconds] = useState(0);
-
-  console.clear();
-  console.log({ timer, seconds });
 
   useEffect(() => {
     let intervalId;
 
-    if (timer === "stop") setSeconds(0);
+    if (timer === STATUS_TIMER.STOP) setSeconds(0);
 
-    if (timer === "start" && timer !== "pause") {
+    if (timer === STATUS_TIMER.START && timer !== STATUS_TIMER.PAUSE) {
       intervalId = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds + 1);
       }, 1000);

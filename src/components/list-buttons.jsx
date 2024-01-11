@@ -8,11 +8,11 @@ export default function ListButton({ disabled, handleClick, item }) {
         className={`
                 ${active && "top-36"} 
                 ${show && "hidden"}
-                absolute bg-slate-300 text-white rounded-full w-28 h-28 font-extrabold text-4xl transition-all duration-300 ease-linear
+                absolute bg-slate-300 text-white rounded-full w-24 h-24 font-extrabold text-4xl transition-all duration-300 ease-linear
                 `}
       ></button>
 
-      <div className="flex items-center justify-center bg-slate-700 text-white rounded-full w-28 h-28 font-extrabold text-4xl">
+      <div className="flex items-center justify-center bg-slate-700 text-white rounded-full w-24 h-24 font-extrabold text-4xl">
         {Math.abs(value)}
       </div>
     </div>

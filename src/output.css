@@ -556,6 +556,10 @@ video {
   top: 9rem;
 }
 
+.m-10 {
+  margin: 2.5rem;
+}
+
 .flex {
   display: flex;
 }
@@ -572,8 +576,28 @@ video {
   height: 7rem;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
+.h-24 {
+  height: 6rem;
+}
+
+.max-h-32 {
+  max-height: 8rem;
+}
+
 .w-28 {
   width: 7rem;
+}
+
+.w-32 {
+  width: 8rem;
+}
+
+.w-24 {
+  width: 6rem;
 }
 
 .grid-cols-4 {
@@ -650,6 +674,10 @@ video {
 
 .p-5 {
   padding: 1.25rem;
+}
+
+.p-10 {
+  padding: 2.5rem;
 }
 
 .px-10 {

@@ -7,15 +7,19 @@ import ListButton from "./components/list-buttons";
 import Statistics from "./components/statistics";
 import Timer from "./components/timer";
 
+export const STATUS_TIMER = {
+  STOP: "stop",
+  START: "start",
+  PAUSE: "pause",
+};
+
 function App() {
   const [numbers, setNumbers] = useState([]);
   const [statistics, setStatistics] = useState({
     errors: 0,
     success: 0,
   });
-  const [timer, setTimer] = useState("stop");
-
-  console.log(numbers);
+  const [timer, setTimer] = useState(STATUS_TIMER.STOP);
 
   // should load game
   useEffect(() => {
@@ -25,7 +29,7 @@ function App() {
   useEffect(() => {
     // if all numbers is show true so you win
     if (numbers.length > 0 && numbers.every((item) => item.show)) {
-      setTimer("pause");
+      setTimer(STATUS_TIMER.PAUSE);
       confetti({
         particleCount: 100,
         spread: 70,
@@ -41,7 +45,7 @@ function App() {
 
       setTimeout(() => {
         setNumbers(arrValues);
-        setTimer("start");
+        setTimer(STATUS_TIMER.START);
       }, 5000);
     }
 
@@ -106,7 +110,7 @@ function App() {
     });
     setNumbers(arrValues);
     setStatistics({ errors: 0, success: 0 });
-    setTimer("stop");
+    setTimer(STATUS_TIMER.STOP);
   };
 
   const handleClick = (value) => () => {
@@ -135,7 +139,7 @@ function App() {
       </nav>
 
       <main className="flex items-center justify-evenly flex-wrap gap-2">
-        <section className="grid grid-rows-4 grid-cols-4 gap-10">
+        <section className="grid grid-rows-4 grid-cols-4 gap-10 m-10">
           {numbers.map((item, index) => {
             const { value } = item;
             return (
