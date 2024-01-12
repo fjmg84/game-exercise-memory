@@ -90,42 +90,6 @@ function App() {
         }, 1200);
       }
     }
-
-    /* const values = numbers.filter((item) => item.active);
-    let arrayNumbers = [...numbers];
-    let absValue1 = Math.abs(values[0].value),
-      absValue2 = Math.abs(values[1].value);
-
-    if (values.length === 2) {
-      // if the two numbers are not the same
-      if (absValue1 !== absValue2) {
-        setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
-        values.forEach((item) => {
-          let index = arrayNumbers.findIndex(
-            (number) => number.value === item.value
-          );
-          arrayNumbers[index].active = false;
-        });
-
-        setTimeout(() => {
-          setNumbers(arrayNumbers);
-        }, 1200);
-      }
-
-      // if the two numbers are the same
-      if (absValue1 === absValue2) {
-        setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
-        values.forEach((item) => {
-          let index = arrayNumbers.findIndex(
-            (number) => number.value === item.value
-          );
-          arrayNumbers[index].active = false;
-          arrayNumbers[index].show = true;
-        });
-
-        setNumbers(arrayNumbers);
-      }
-    } */
   }, [numbers]);
 
   const resetGame = () => {
@@ -163,7 +127,7 @@ function App() {
 
   return (
     <div>
-      <nav className="flex justify-between py-5 px-3 items-center">
+      <nav className="flex flex-wrap gap-10 justify-between py-5 px-3 items-center">
         <h1 className="text-gray-700 font-extrabold text-4xl">memory</h1>
         <div className="flex gap-5">
           <Button
@@ -180,7 +144,7 @@ function App() {
       </nav>
 
       <main className="flex items-center justify-evenly flex-wrap gap-2">
-        <section className="grid grid-rows-4 grid-cols-4 gap-10 m-10">
+        <section className="grid grid-rows-2 grid-cols-2 md:grid-rows-4 md:grid-cols-4 gap-5 md:gap-10 m-10">
           {numbers.map((item, index) => {
             const { value } = item;
             return (
@@ -209,3 +173,39 @@ function App() {
 }
 
 export default App;
+
+/* const values = numbers.filter((item) => item.active);
+    let arrayNumbers = [...numbers];
+    let absValue1 = Math.abs(values[0].value),
+      absValue2 = Math.abs(values[1].value);
+
+    if (values.length === 2) {
+      // if the two numbers are not the same
+      if (absValue1 !== absValue2) {
+        setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
+        values.forEach((item) => {
+          let index = arrayNumbers.findIndex(
+            (number) => number.value === item.value
+          );
+          arrayNumbers[index].active = false;
+        });
+
+        setTimeout(() => {
+          setNumbers(arrayNumbers);
+        }, 1200);
+      }
+
+      // if the two numbers are the same
+      if (absValue1 === absValue2) {
+        setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
+        values.forEach((item) => {
+          let index = arrayNumbers.findIndex(
+            (number) => number.value === item.value
+          );
+          arrayNumbers[index].active = false;
+          arrayNumbers[index].show = true;
+        });
+
+        setNumbers(arrayNumbers);
+      }
+    } */
