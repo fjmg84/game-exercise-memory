@@ -15,10 +15,7 @@ export const STATUS_TIMER = {
 
 function App() {
   const [numbers, setNumbers] = useState([]);
-  const [statistics, setStatistics] = useState({
-    errors: 0,
-    success: 0,
-  });
+  const [movements, setMovements] = useState(0);
   const [timer, setTimer] = useState(STATUS_TIMER.STOP);
 
   // should load game
@@ -72,7 +69,6 @@ function App() {
         });
 
         setNumbers(arrNumbers);
-        setStatistics((prev) => ({ ...prev, success: prev.success + 1 }));
       }
 
       if (value1 !== value2) {
@@ -84,7 +80,6 @@ function App() {
           ...arrNumbers[indices[1]],
           active: false,
         });
-        setStatistics((prev) => ({ ...prev, errors: prev.errors + 1 }));
         setTimeout(() => {
           setNumbers(arrNumbers);
         }, 1200);
@@ -114,7 +109,7 @@ function App() {
       };
     });
     setNumbers(arrValues);
-    setStatistics({ errors: 0, success: 0 });
+    setMovements(0);
     setTimer(STATUS_TIMER.STOP);
   };
 
@@ -123,6 +118,7 @@ function App() {
     const index = arrayNumbers.findIndex((item) => item.value === value);
     arrayNumbers[index].active = true;
     setNumbers(arrayNumbers);
+    setMovements(movements + 1);
   };
 
   return (
@@ -160,10 +156,7 @@ function App() {
 
         <section>
           <article className="bg-slate-700 text-white p-5 flex lg:flex-col rounded-full lg:rounded-md items-center justify-center gap-5 lg:gap-2">
-            <Statistics
-              errors={statistics.errors}
-              success={statistics.success}
-            />
+            <Statistics movements={movements} />
             <Timer timer={timer} />
           </article>
         </section>
